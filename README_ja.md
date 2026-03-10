@@ -8,6 +8,25 @@ Slack Web API を User Token で利用するコマンドラインツールです
 
 ## インストール
 
+### ビルド済みバイナリをダウンロード（推奨）
+
+[Releases](https://github.com/myfinder/slagent-cli/releases) ページから最新のバイナリをダウンロードできます。
+
+| プラットフォーム | ファイル |
+|----------------|---------|
+| Linux (x86_64) | `slagent-linux-amd64` |
+| macOS (Intel) | `slagent-darwin-amd64` |
+| macOS (Apple Silicon) | `slagent-darwin-arm64` |
+
+```bash
+# 例: macOS Apple Silicon
+curl -LO https://github.com/myfinder/slagent-cli/releases/latest/download/slagent-darwin-arm64
+chmod +x slagent-darwin-arm64
+mv slagent-darwin-arm64 /usr/local/bin/slagent
+```
+
+### ソースからインストール
+
 ```bash
 git clone https://github.com/myfinder/slagent-cli.git
 cd slagent-cli

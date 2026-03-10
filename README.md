@@ -8,6 +8,25 @@ Search messages, check mentions, post to channels, read threads, and more — al
 
 ## Installation
 
+### Download pre-built binary (recommended)
+
+Download the latest binary from the [Releases](https://github.com/myfinder/slagent-cli/releases) page.
+
+| Platform | File |
+|----------|------|
+| Linux (x86_64) | `slagent-linux-amd64` |
+| macOS (Intel) | `slagent-darwin-amd64` |
+| macOS (Apple Silicon) | `slagent-darwin-arm64` |
+
+```bash
+# Example: macOS Apple Silicon
+curl -LO https://github.com/myfinder/slagent-cli/releases/latest/download/slagent-darwin-arm64
+chmod +x slagent-darwin-arm64
+mv slagent-darwin-arm64 /usr/local/bin/slagent
+```
+
+### Install from source
+
 ```bash
 git clone https://github.com/myfinder/slagent-cli.git
 cd slagent-cli
