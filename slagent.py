@@ -18,18 +18,36 @@ def get_client():
     return WebClient(token=token)
 
 
+def handle_api_error(e):
+    """Print a SlackApiError and exit."""
+    click.echo(f"Error: {e.response['error']}", err=True)
+    if e.response["error"] == "missing_scope":
+        click.echo(
+            "Hint: add the required scope to your Slack App. See README for details.",
+            err=True,
+        )
+    sys.exit(1)
+
+
 def resolve_channel(client, channel_name):
     """Resolve channel name or ID to channel ID."""
     if channel_name.startswith("C") and len(channel_name) >= 9:
         return channel_name
     name = channel_name.lstrip("#")
+    types = "public_channel,private_channel"
     cursor = None
     while True:
-        resp = client.conversations_list(
-            types="public_channel,private_channel",
-            limit=200,
-            cursor=cursor,
-        )
+        try:
+            resp = client.conversations_list(
+                types=types,
+                limit=200,
+                cursor=cursor,
+            )
+        except SlackApiError as e:
+            if e.response["error"] == "missing_scope" and "private_channel" in types:
+                types = "public_channel"
+                continue
+            handle_api_error(e)
         for ch in resp["channels"]:
             if ch["name"] == name:
                 return ch["id"]
@@ -72,8 +90,7 @@ def search(query, count, sort):
     try:
         resp = client.search_messages(query=query, count=count, sort=sort)
     except SlackApiError as e:
-        click.echo(f"Error: {e.response['error']}", err=True)
-        sys.exit(1)
+        handle_api_error(e)
 
     matches = resp["messages"]["matches"]
     if not matches:
@@ -105,15 +122,13 @@ def mentions(count):
         auth = client.auth_test()
         user_id = auth["user_id"]
     except SlackApiError as e:
-        click.echo(f"Error: {e.response['error']}", err=True)
-        sys.exit(1)
+        handle_api_error(e)
 
     query = f"<@{user_id}>"
     try:
         resp = client.search_messages(query=query, count=count, sort="timestamp")
     except SlackApiError as e:
-        click.echo(f"Error: {e.response['error']}", err=True)
-        sys.exit(1)
+        handle_api_error(e)
 
     matches = resp["messages"]["matches"]
     if not matches:
@@ -149,10 +164,10 @@ def post(channel, text, thread_ts):
         kwargs["thread_ts"] = thread_ts
     try:
         resp = client.chat_postMessage(**kwargs)
-        click.echo(f"Posted to #{channel} (ts: {resp['ts']})")
+        name = channel.lstrip("#")
+        click.echo(f"Posted to #{name} (ts: {resp['ts']})")
     except SlackApiError as e:
-        click.echo(f"Error: {e.response['error']}", err=True)
-        sys.exit(1)
+        handle_api_error(e)
 
 
 # ---------- thread ----------
@@ -170,8 +185,7 @@ def thread(channel, thread_ts, count):
             channel=channel_id, ts=thread_ts, limit=count
         )
     except SlackApiError as e:
-        click.echo(f"Error: {e.response['error']}", err=True)
-        sys.exit(1)
+        handle_api_error(e)
 
     messages = resp["messages"]
     if not messages:
@@ -197,17 +211,24 @@ def channels(show_all):
     client = get_client()
     results = []
     cursor = None
+    types = "public_channel,private_channel"
     while True:
         try:
             resp = client.users_conversations(
-                types="public_channel,private_channel",
+                types=types,
                 exclude_archived=not show_all,
                 limit=200,
                 cursor=cursor,
             )
         except SlackApiError as e:
-            click.echo(f"Error: {e.response['error']}", err=True)
-            sys.exit(1)
+            if e.response["error"] == "missing_scope" and "private_channel" in types:
+                types = "public_channel"
+                click.echo(
+                    "(groups:read scope not available, showing public channels only)",
+                    err=True,
+                )
+                continue
+            handle_api_error(e)
         results.extend(resp["channels"])
         cursor = resp.get("response_metadata", {}).get("next_cursor")
         if not cursor:
@@ -233,8 +254,7 @@ def history(channel, count):
     try:
         resp = client.conversations_history(channel=channel_id, limit=count)
     except SlackApiError as e:
-        click.echo(f"Error: {e.response['error']}", err=True)
-        sys.exit(1)
+        handle_api_error(e)
 
     messages = resp["messages"]
     if not messages:
