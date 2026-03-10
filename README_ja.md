@@ -134,6 +134,36 @@ slagent channels --all
 |-----------|------|
 | `--all` | アーカイブ済みチャンネルも含める |
 
+## リリース
+
+GitHub Actions によりリリースが自動化されています。バージョンタグを push すると、Linux / macOS 向けのスタンドアロンバイナリがビルドされ、GitHub Release に添付されます。
+
+### 新しいリリースの作成手順
+
+1. `pyproject.toml` と `slagent.py`（`@click.version_option`）のバージョンを更新
+2. 変更をコミット
+3. タグを作成して push:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+4. GitHub Actions が自動的に以下を実行:
+   - Linux (amd64)、macOS (Intel)、macOS (Apple Silicon) 向けのスタンドアロンバイナリをビルド
+   - バイナリと SHA256 チェックサムを添付した GitHub Release を作成
+   - コミット履歴からリリースノートを自動生成
+
+5. 完了後、[Releases](https://github.com/myfinder/slagent-cli/releases) ページからバイナリをダウンロードできます
+
+### ビルドターゲット
+
+| バイナリ | プラットフォーム |
+|---------|----------------|
+| `slagent-linux-amd64` | Linux x86_64 |
+| `slagent-darwin-amd64` | macOS Intel |
+| `slagent-darwin-arm64` | macOS Apple Silicon |
+
 ## ライセンス
 
 MIT

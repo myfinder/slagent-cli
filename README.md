@@ -134,6 +134,36 @@ slagent channels --all
 |--------|-------------|
 | `--all` | Include archived channels |
 
+## Release
+
+Releases are automated via GitHub Actions. When a version tag is pushed, standalone binaries are built for Linux and macOS and attached to a GitHub Release.
+
+### How to create a new release
+
+1. Update the version in `pyproject.toml` and `slagent.py` (`@click.version_option`)
+2. Commit the change
+3. Create and push a tag:
+
+```bash
+git tag v0.1.0
+git push origin v0.1.0
+```
+
+4. GitHub Actions will automatically:
+   - Build standalone binaries for Linux (amd64), macOS (Intel), and macOS (Apple Silicon)
+   - Create a GitHub Release with the binaries and SHA256 checksums
+   - Generate release notes from commit history
+
+5. Once complete, the binaries will be available on the [Releases](https://github.com/myfinder/slagent-cli/releases) page
+
+### Build targets
+
+| Binary | Platform |
+|--------|----------|
+| `slagent-linux-amd64` | Linux x86_64 |
+| `slagent-darwin-amd64` | macOS Intel |
+| `slagent-darwin-arm64` | macOS Apple Silicon |
+
 ## License
 
 MIT
