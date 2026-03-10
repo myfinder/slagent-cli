@@ -15,8 +15,6 @@ jobs:
         include:
           - os: ubuntu-latest
             asset_name: slagent-linux-amd64
-          - os: macos-13
-            asset_name: slagent-darwin-amd64
           - os: macos-latest
             asset_name: slagent-darwin-arm64
 

@@ -15,7 +15,6 @@ Download the latest binary from the [Releases](https://github.com/myfinder/slage
 | Platform | File |
 |----------|------|
 | Linux (x86_64) | `slagent-linux-amd64` |
-| macOS (Intel) | `slagent-darwin-amd64` |
 | macOS (Apple Silicon) | `slagent-darwin-arm64` |
 
 ```bash
@@ -161,7 +160,6 @@ git push origin v0.1.0
 | Binary | Platform |
 |--------|----------|
 | `slagent-linux-amd64` | Linux x86_64 |
-| `slagent-darwin-amd64` | macOS Intel |
 | `slagent-darwin-arm64` | macOS Apple Silicon |
 
 ## License
