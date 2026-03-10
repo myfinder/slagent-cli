@@ -155,13 +155,16 @@ def mentions(count):
 @click.argument("channel")
 @click.argument("text")
 @click.option("--thread-ts", default=None, help="Thread timestamp to reply to")
-def post(channel, text, thread_ts):
+@click.option("--broadcast", is_flag=True, help="Also send thread reply to the channel")
+def post(channel, text, thread_ts, broadcast):
     """Post a message to a channel. CHANNEL can be #name or channel ID."""
     client = get_client()
     channel_id = resolve_channel(client, channel)
     kwargs = {"channel": channel_id, "text": text}
     if thread_ts:
         kwargs["thread_ts"] = thread_ts
+    if broadcast and thread_ts:
+        kwargs["reply_broadcast"] = True
     try:
         resp = client.chat_postMessage(**kwargs)
         name = channel.lstrip("#")
